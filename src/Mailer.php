@@ -48,7 +48,7 @@ class Mailer
      */
     protected function sendViaSendGrid(string $to, string $from, string $subject, string $body)
     {
-       try {
+        try {
             $email = new SendGridMail;
             $email->setFrom($from);
             $email->setSubject($subject);
@@ -67,9 +67,9 @@ class Mailer
                 ->post($this->providerConfig['api_url'] ?? 'https://api.sendgrid.com/v3/mail/send', $email->jsonSerialize());
 
             return $response->json();
-       } catch(\Exception $e) {
-           return throw new \RuntimeException("Error sending email via SendGrid: {$e->getMessage()}");
-       }
+        } catch (\Exception $e) {
+            return throw new \RuntimeException("Error sending email via SendGrid: {$e->getMessage()}");
+        }
     }
 
     /**
@@ -77,7 +77,7 @@ class Mailer
      */
     protected function sendViaAmazonSes(string $to, string $from, string $subject, string $body)
     {
-       try {
+        try {
             if (! $this->sesClient) {
                 $sdk = new AwsSdk([
                     'region' => $this->providerConfig['region'] ?? 'us-east-1',
@@ -106,9 +106,10 @@ class Mailer
             ];
 
             return $this->sesClient->sendEmail($message)->toArray();
-       } catch (\Exception $e) {
-           return throw new \RuntimeException("Error sending email via Amazon SES: {$e->getMessage()}");
-       }
+        } catch (\Exception $e) {
+            return throw new \RuntimeException("Error sending email via Amazon SES: {$e->getMessage()}");
+        }
     }
+
 
 }
