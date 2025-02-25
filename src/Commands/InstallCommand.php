@@ -5,11 +5,11 @@ namespace Twenty20\Mailer\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use function Laravel\Prompts\select;
+
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\note;
+use function Laravel\Prompts\select;
 use function Laravel\Prompts\warning;
-use function Laravel\Prompts\error;
 
 class InstallCommand extends Command
 {
