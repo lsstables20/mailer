@@ -18,7 +18,6 @@ class MailerServiceProvider extends PackageServiceProvider
         $package
             ->name('mailer')
             ->hasConfigFile()
-            ->hasViews()
             ->hasRoutes('web')
             ->hasMigration('create_mailer_table')
             ->hasCommand(InstallCommand::class);

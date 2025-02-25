@@ -5,6 +5,11 @@ namespace Twenty20\Mailer\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\info;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\warning;
+use function Laravel\Prompts\error;
 
 class InstallCommand extends Command
 {
@@ -23,13 +28,14 @@ class InstallCommand extends Command
      */
     public function handle()
     {
-        $provider = $this->choice(
-            'Which provider would you like to use?',
-            ['SendGrid', 'Amazon SES', 'Mailchimp', 'Mailgun'],
-            0
+
+        $provider = select(
+            label: 'Which provider would you like to use?',
+            options: ['SendGrid', 'Amazon SES', 'Mailchimp', 'Mailgun'],
+            default: 'SendGrid',
         );
 
-        $this->info("Installing provider: {$provider}");
+        info("Installing provider: {$provider}");
 
         // Composer require
         switch (strtolower($provider)) {
@@ -66,7 +72,7 @@ class InstallCommand extends Command
         // Run migrations
         $this->call('migrate');
 
-        $this->info('Installation complete!');
+        note('Installation complete. Set your API keys in .env and start sending emails!');
     }
 
     /**
@@ -75,7 +81,7 @@ class InstallCommand extends Command
     protected function runComposerRequire($package)
     {
         $command = 'composer require '.$package;
-        $this->info("Running: {$command}");
+        info("Running: {$command}");
         passthru($command);
     }
 
@@ -87,7 +93,7 @@ class InstallCommand extends Command
         $configFile = config_path('mailer.php');
 
         if (! File::exists($configFile)) {
-            $this->warn("Config file not found at [{$configFile}]. Skipping update.");
+            warning("Config file not found at [{$configFile}]. Skipping update.");
 
             return;
         }
@@ -99,7 +105,7 @@ class InstallCommand extends Command
         $newContents = preg_replace($pattern, $replacement, $contents);
 
         File::put($configFile, $newContents);
-        $this->info("Updated config/mailer.php to provider={$provider}");
+        note("Updated config/mailer.php to provider {$provider}");
     }
 
     /**
@@ -113,19 +119,19 @@ class InstallCommand extends Command
         $exampleFilePath = base_path('.env.example');
 
         if (! File::exists($envFilePath)) {
-            $this->warn('.env file not found. Skipping env update.');
+            warning('.env file not found. Skipping env update.');
         } else {
             $envContents = File::get($envFilePath);
             $envContents = $this->appendProviderKeys($provider, $envContents);
             File::put($envFilePath, $envContents);
-            $this->info("Updated .env with placeholders for {$provider}.");
+            info("Updated .env with placeholders for {$provider}.");
         }
 
         if (File::exists($exampleFilePath)) {
             $exampleContents = File::get($exampleFilePath);
             $exampleContents = $this->appendProviderKeys($provider, $exampleContents);
             File::put($exampleFilePath, $exampleContents);
-            $this->info("Updated .env.example with placeholders for {$provider}.");
+            info("Updated .env.example with placeholders for {$provider}.");
         }
     }
 
