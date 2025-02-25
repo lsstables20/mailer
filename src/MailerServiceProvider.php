@@ -4,10 +4,9 @@ namespace Twenty20\Mailer;
 
 use Illuminate\Mail\MailManager;
 use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Twenty20\Mailer\Commands\InstallCommand;
 use Twenty20\Mailer\Transport\Twenty20Transport;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Twenty20\Mailer\Transport\Twenty20TransportFactory;
 
 class MailerServiceProvider extends PackageServiceProvider
 {
