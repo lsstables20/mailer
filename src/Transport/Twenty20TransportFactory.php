@@ -2,10 +2,9 @@
 
 namespace Twenty20\Mailer\Transport;
 
-use Twenty20\Mailer\Facades\Mailer;
 use Symfony\Component\Mailer\Transport\Dsn;
 use Symfony\Component\Mailer\Transport\TransportInterface;
-
+use Twenty20\Mailer\Facades\Mailer;
 
 class Twenty20TransportFactory
 {

@@ -3,16 +3,16 @@
 namespace Twenty20\Mailer\Transport;
 
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Mime\Email;
-use Twenty20\Mailer\Facades\Mailer;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
+use Symfony\Component\Mime\Email;
+use Twenty20\Mailer\Facades\Mailer;
 
 class Twenty20Transport extends AbstractTransport
 {
     protected Mailer $mailer;
 
-    public function __construct(Mailer $mailer, LoggerInterface $logger = null)
+    public function __construct(Mailer $mailer, ?LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         $this->mailer = $mailer;
@@ -22,7 +22,7 @@ class Twenty20Transport extends AbstractTransport
     {
         $email = $message->getOriginalMessage();
 
-        if (!$email instanceof Email) {
+        if (! $email instanceof Email) {
             throw new \RuntimeException('Unsupported message type.');
         }
 
