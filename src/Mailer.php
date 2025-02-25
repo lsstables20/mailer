@@ -110,6 +110,4 @@ class Mailer
             return throw new \RuntimeException("Error sending email via Amazon SES: {$e->getMessage()}");
         }
     }
-
-
 }

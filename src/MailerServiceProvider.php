@@ -35,15 +35,6 @@ class MailerServiceProvider extends PackageServiceProvider
             return new Mailer($app['config']->get('twentytwenty-mailer', []));
         });
 
-        // Register custom mail transport inside Laravel
-        // $this->app->extend('mail.manager', function (MailManager $mailManager, $app) {
-        //     $mailManager->extend('twenty20', function () use ($app) {
-        //         return (new Twenty20TransportFactory())->create(new \Symfony\Component\Mailer\Transport\Dsn());
-        //     });
-
-        //     return $mailManager;
-        // });
-
         $this->app->resolving(MailManager::class, function (MailManager $mailManager) {
             dd('here');
             $mailManager->extend('twenty20', function ($app) {

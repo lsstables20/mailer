@@ -47,7 +47,6 @@ class WebhookController extends Controller
             //         : now(),
             // ]);
 
-
         }
     }
 
