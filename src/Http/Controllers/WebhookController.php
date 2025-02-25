@@ -17,8 +17,6 @@ class WebhookController extends Controller
         match (strtolower($provider)) {
             'sendgrid' => $this->handleSendGridEvents($payload),
             'amazon_ses' => $this->handleSesEvents($payload),
-            'mailchimp' => $this->handleMailchimpEvents($payload),
-            'mailgun' => $this->handleMailgunEvents($payload),
             default => Log::warning("Unknown provider: {$provider}"),
         };
 
