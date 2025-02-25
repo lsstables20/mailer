@@ -9,10 +9,6 @@ use SendGrid\Mail\Mail as SendGridMail;
 
 class Mailer
 {
-    /**
-     * The name of the configured provider, e.g.
-     * 'sendgrid', 'amazon_ses', 'mailchimp', 'mailgun'.
-     */
     protected string $provider;
 
     protected array $providerConfig;
@@ -30,7 +26,7 @@ class Mailer
     }
 
     /**
-     * Send an email in a provider-agnostic way, returning the response.
+     * Send an email via the configured provider.
      *
      * @param  string  $to  Recipient email
      * @param  string  $from  Sender email
@@ -43,8 +39,6 @@ class Mailer
         return match ($this->provider) {
             'sendgrid' => $this->sendViaSendGrid($to, $from, $subject, $body),
             'amazon_ses' => $this->sendViaAmazonSes($to, $from, $subject, $body),
-            'mailchimp' => $this->sendViaMailchimp($to, $from, $subject, $body),
-            'mailgun' => $this->sendViaMailgun($to, $from, $subject, $body),
             default => throw new \RuntimeException("Unsupported provider [{$this->provider}]."),
         };
     }
@@ -79,7 +73,7 @@ class Mailer
     }
 
     /**
-     * Send an email via Amazon SES using AWS SDK for PHP.
+     * Send an email via Amazon SES
      */
     protected function sendViaAmazonSes(string $to, string $from, string $subject, string $body)
     {
@@ -117,57 +111,4 @@ class Mailer
        }
     }
 
-    /**
-     * Send an email via Mailchimp.
-     */
-    protected function sendViaMailchimp(string $to, string $from, string $subject, string $body)
-    {
-        try {
-            $apiKey = $this->providerConfig['api_key'] ?? '';
-            $apiUrl = $this->providerConfig['api_url'] ?? 'https://<REGION>.api.mailchimp.com/3.0/messages/send';
-
-            // If your API key is "us1-XXXX", the 'us1' might define the region, etc.
-
-            $payload = [
-                'from_email' => $from,
-                'to_email' => $to,
-                'subject' => $subject,
-                'content' => $body,
-            ];
-
-            // Some Mailchimp endpoints might require Basic Auth or token.
-            $response = Http::withToken($apiKey)->post($apiUrl, $payload);
-
-            return $response->json();
-        } catch (\Exception $e) {
-            return throw new \RuntimeException("Error sending email via Mailchimp: {$e->getMessage()}");
-        }
-    }
-
-    /**
-     * Send an email via Mailgun using either the official library or raw HTTP.
-     */
-    protected function sendViaMailgun(string $to, string $from, string $subject, string $body)
-    {
-        try{
-            $apiKey = $this->providerConfig['api_key'] ?? '';
-            $apiBaseUrl = $this->providerConfig['api_base_url'] ?? 'https://api.mailgun.net/v3';
-
-            $url = "{$apiBaseUrl}/messages";
-
-            $response = Http::withBasicAuth('api', $apiKey)
-                ->asForm()
-                ->post($url, [
-                    'from' => $from,
-                    'to' => $to,
-                    'subject' => $subject,
-                    'text' => strip_tags($body),
-                    'html' => $body,
-                ]);
-
-            return $response->json();
-        } catch (\Exception $e) {
-            return throw new \RuntimeException("Error sending email via Mailgun: {$e->getMessage()}");
-        }
-    }
 }

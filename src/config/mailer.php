@@ -35,16 +35,6 @@ return [
             'api_secret' => env('AWS_SECRET_ACCESS_KEY', ''),
             'region' => env('AWS_REGION', 'us-east-1'),
         ],
-
-        'mailchimp' => [
-            'api_key' => env('MAILCHIMP_API_KEY', ''),
-            'api_url' => env('MAILCHIMP_API_URL', 'https://<REGION>.api.mailchimp.com/3.0/messages/send'),
-        ],
-
-        'mailgun' => [
-            'api_key' => env('MAILGUN_API_KEY', ''),
-            'api_base_url' => env('MAILGUN_API_BASE_URL', 'https://api.mailgun.net/v3'),
-        ],
     ],
 
     /*

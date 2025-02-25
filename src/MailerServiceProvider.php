@@ -2,9 +2,11 @@
 
 namespace Twenty20\Mailer;
 
+use Illuminate\Mail\MailManager;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Twenty20\Mailer\Commands\InstallCommand;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Twenty20\Mailer\Transport\Twenty20TransportFactory;
 
 class MailerServiceProvider extends PackageServiceProvider
 {
@@ -28,10 +30,17 @@ class MailerServiceProvider extends PackageServiceProvider
      */
     public function packageRegistered()
     {
-        // Bind or singleton your Mailer class into the container:
         $this->app->singleton(Mailer::class, function ($app) {
-            // The config array from config('mailer')
-            return new Mailer($app['config']->get('mailer', []));
+            return new Mailer($app['config']->get('twentytwenty-mailer', []));
+        });
+
+        // Register custom mail transport inside Laravel
+        $this->app->extend('mail.manager', function (MailManager $mailManager, $app) {
+            $mailManager->extend('twenty20', function () use ($app) {
+                return (new Twenty20TransportFactory())->create(new \Symfony\Component\Mailer\Transport\Dsn());
+            });
+
+            return $mailManager;
         });
     }
 }

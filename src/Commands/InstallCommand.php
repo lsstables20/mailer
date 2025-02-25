@@ -31,7 +31,7 @@ class InstallCommand extends Command
 
         $provider = select(
             label: 'Which provider would you like to use?',
-            options: ['SendGrid', 'Amazon SES', 'Mailchimp', 'Mailgun'],
+            options: ['SendGrid', 'Amazon SES'],
             default: 'SendGrid',
         );
 
@@ -44,12 +44,6 @@ class InstallCommand extends Command
                 break;
             case 'amazon ses':
                 $this->runComposerRequire('aws/aws-sdk-php');
-                break;
-            case 'mailchimp':
-                $this->runComposerRequire('mailchimp/transactional');
-                break;
-            case 'mailgun':
-                $this->runComposerRequire('mailgun/mailgun-php');
                 break;
             default:
                 $this->warn("Unknown provider [{$provider}]. Defaulting to SendGrid.");
@@ -72,7 +66,8 @@ class InstallCommand extends Command
         // Run migrations
         $this->call('migrate');
 
-        note('Installation complete. Set your API keys in .env and start sending emails!');
+        info('Installation completed');
+        info('Set your API keys in .env and start sending emails!');
     }
 
     /**
@@ -105,7 +100,7 @@ class InstallCommand extends Command
         $newContents = preg_replace($pattern, $replacement, $contents);
 
         File::put($configFile, $newContents);
-        note("Updated config/mailer.php to provider {$provider}");
+        info("Updated config/mailer.php to provider {$provider}");
     }
 
     /**
@@ -157,22 +152,6 @@ class InstallCommand extends Command
                     'AWS_ACCESS_KEY_ID=',
                     'AWS_SECRET_ACCESS_KEY=',
                     'AWS_REGION=us-east-1',
-                ];
-                break;
-
-            case 'mailchimp':
-                $placeholders = [
-                    'MAILER_PROVIDER=mailchimp',
-                    'MAILCHIMP_API_KEY=',
-                    'MAILCHIMP_API_URL=https://<REGION>.api.mailchimp.com/3.0/messages/send',
-                ];
-                break;
-
-            case 'mailgun':
-                $placeholders = [
-                    'MAILER_PROVIDER=mailgun',
-                    'MAILGUN_API_KEY=',
-                    'MAILGUN_API_BASE_URL=https://api.mailgun.net/v3',
                 ];
                 break;
         }

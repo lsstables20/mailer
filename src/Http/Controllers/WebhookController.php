@@ -38,16 +38,18 @@ class WebhookController extends Controller
         //   ...
         // ]
         foreach ($payload as $event) {
-            MailerEvent::create([
-                'provider' => 'sendgrid',
-                'email' => $event['email'] ?? null,
-                'event_type' => $event['event'] ?? null,
-                'reason' => $event['reason'] ?? null,
-                'message_id' => $event['sg_message_id'] ?? null,
-                'event_at' => isset($event['timestamp'])
-                    ? date('Y-m-d H:i:s', $event['timestamp'])
-                    : now(),
-            ]);
+            // MailerEvent::create([
+            //     'provider' => 'sendgrid',
+            //     'email' => $event['email'] ?? null,
+            //     'event_type' => $event['event'] ?? null,
+            //     'reason' => $event['reason'] ?? null,
+            //     'message_id' => $event['sg_message_id'] ?? null,
+            //     'event_at' => isset($event['timestamp'])
+            //         ? date('Y-m-d H:i:s', $event['timestamp'])
+            //         : now(),
+            // ]);
+
+
         }
     }
 
@@ -73,54 +75,5 @@ class WebhookController extends Controller
                 ]);
             }
         }
-    }
-
-    protected function handleMailchimpEvents(array $payload): void
-    {
-        // Example:
-        // {
-        //   "type": "unsubscribe",
-        //   "fired_at": "2023-09-01 12:34:56",
-        //   "data": {
-        //     "email": "john@example.com",
-        //     "reason": "manual unsubscribe",
-        //     "id": "someInternalId"
-        //   }
-        // }
-        $eventType = $payload['type'] ?? null;
-        $data = $payload['data'] ?? [];
-
-        MailerEvent::create([
-            'provider' => 'mailchimp',
-            'email' => $data['email'] ?? null,
-            'event_type' => $eventType,
-            'reason' => $data['reason'] ?? null,
-            'message_id' => $data['id'] ?? null,
-            'event_at' => isset($payload['fired_at'])
-                ? date('Y-m-d H:i:s', strtotime($payload['fired_at']))
-                : now(),
-        ]);
-    }
-
-    protected function handleMailgunEvents(array $payload): void
-    {
-        // Example:
-        // {
-        //   "event": "failed",
-        //   "recipient": "someone@example.com",
-        //   "reason": "bounce",
-        //   "Message-Id": "<someMessageId@domain.com>",
-        //   "timestamp": 1690852009
-        // }
-        MailerEvent::create([
-            'provider' => 'mailgun',
-            'email' => $payload['recipient'] ?? null,
-            'event_type' => $payload['event'] ?? null,
-            'reason' => $payload['reason'] ?? null,
-            'message_id' => $payload['Message-Id'] ?? null,
-            'event_at' => isset($payload['timestamp'])
-                ? date('Y-m-d H:i:s', $payload['timestamp'])
-                : now(),
-        ]);
     }
 }
